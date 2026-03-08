@@ -99,6 +99,9 @@
       <div class="d-flex align-items-center justify-content-between mb-2">
         <label class="form-label fw-semibold mb-0">Translated Text</label>
         <div class="d-flex align-items-center gap-1">
+          <button id="delete-spelling-btn" class="btn btn-sm btn-outline-danger" title="Delete this spelling">
+            <i class="bi bi-trash"></i>
+          </button>
           <button id="save-spelling-btn" class="btn btn-sm btn-outline-secondary" title="Save current spelling">
             <i class="bi bi-floppy"></i>
           </button>
@@ -316,10 +319,12 @@ function updateSaveButton() {
   const selectedMap = getSelectedMap();
   const modified = selectedMap === null ||
     !PHONEMES.every(p => phonemeMap[p.arp] === (selectedMap[p.arp] ?? p.arp));
+  const isMySaving = outputMode.value.startsWith('my:');
   document.getElementById('save-spelling-btn').style.visibility = modified ? 'visible' : 'hidden';
+  document.getElementById('delete-spelling-btn').style.visibility = isMySaving ? 'visible' : 'hidden';
   const selectedOpt = outputMode.options[outputMode.selectedIndex];
   if (selectedOpt) {
-    const baseName = selectedOpt.dataset.baseName ?? selectedOpt.textContent.replace(/\*$/, '').trimEnd();
+    const baseName = selectedOpt.dataset.baseName ?? selectedOpt.textContent.replace(/\s*\*$/, '');
     selectedOpt.dataset.baseName = baseName;
     selectedOpt.textContent = modified ? baseName + ' *' : baseName;
   }
@@ -373,6 +378,32 @@ document.getElementById('save-spelling-btn').addEventListener('click', () => {
   }
   populateMySpellings();
   outputMode.value = val.startsWith('my:') ? val : `my:${spellings.length - 1}`;
+  updateSaveButton();
+});
+
+// Delete spelling button
+document.getElementById('delete-spelling-btn').addEventListener('click', () => {
+  const val = outputMode.value;
+  if (!val.startsWith('my:')) return;
+  const idx = parseInt(val.split(':')[1]);
+  const spellings = loadMySpellings();
+  const name = spellings[idx]?.name ?? 'this spelling';
+  if (!confirm(`Delete "${name}"?`)) return;
+  spellings.splice(idx, 1);
+  saveMySpellings(spellings);
+  populateMySpellings();
+  // Select and apply the first sample spelling
+  const firstSample = SAMPLE_SPELLINGS[0];
+  document.querySelectorAll('.spell-input').forEach(input => {
+    const symbol = firstSample.map[input.dataset.arp] ?? input.dataset.arp;
+    input.value = symbol;
+    phonemeMap[input.dataset.arp] = symbol;
+  });
+  Array.from(outputMode.options).forEach(opt => {
+    if (opt.dataset.baseName) opt.textContent = opt.dataset.baseName;
+  });
+  outputMode.value = 'sample:0';
+  updateOutput();
   updateSaveButton();
 });
 
