@@ -220,7 +220,7 @@ async function loadDictionary() {
       const phonemes = trimmed.slice(sepIdx + 2).trim().split(' ');
       cmuDict[word.toUpperCase()] = phonemes;
     }
-    status.textContent = 'Dictionary loaded.';
+    status.textContent = '';
     updateOutput();
   } catch (e) {
     status.textContent = `Failed to load dictionary: ${e.message}`;
