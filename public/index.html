@@ -307,6 +307,34 @@ SAMPLE_SPELLINGS.forEach((s, i) => {
 
 const outputMode = document.getElementById('output-mode');
 
+// ─── URL sharing ──────────────────────────────────────────────────────────────
+function encodeSpelling(map) {
+  const values = PHONEMES.map(p => map[p.arp] ?? p.arp);
+  const bytes = new TextEncoder().encode(JSON.stringify(values));
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function decodeSpelling(param) {
+  try {
+    const bytes = Uint8Array.from(atob(param.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    const values = JSON.parse(new TextDecoder().decode(bytes));
+    if (!Array.isArray(values) || values.length !== PHONEMES.length) return null;
+    const map = {};
+    PHONEMES.forEach((p, i) => { map[p.arp] = String(values[i]); });
+    return map;
+  } catch { return null; }
+}
+
+function updateUrl(modified, isMySaving) {
+  if (modified || isMySaving) {
+    history.replaceState(null, '', '#spelling=' + encodeSpelling(phonemeMap));
+  } else {
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
 // ─── My Spellings (localStorage) ─────────────────────────────────────────────
 const MY_SPELLINGS_KEY = 'spellcaster-my-spellings';
 
@@ -357,6 +385,7 @@ function updateSaveButton() {
     selectedOpt.dataset.baseName = baseName;
     selectedOpt.textContent = modified ? baseName + ' *' : baseName;
   }
+  updateUrl(modified, isMySaving);
 }
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -486,6 +515,20 @@ document.querySelectorAll('.spell-input').forEach(input => {
   phonemeMap[input.dataset.arp] = symbol;
 });
 outputMode.value = 'sample:0';
+
+// Override with URL-encoded spelling if present
+const urlMatch = location.hash.match(/^#spelling=(.+)$/);
+if (urlMatch) {
+  const urlMap = decodeSpelling(urlMatch[1]);
+  if (urlMap) {
+    document.querySelectorAll('.spell-input').forEach(input => {
+      const symbol = urlMap[input.dataset.arp] ?? input.dataset.arp;
+      input.value = symbol;
+      phonemeMap[input.dataset.arp] = symbol;
+    });
+  }
+}
+
 updateSaveButton();
 
 let cmuDict = null;
