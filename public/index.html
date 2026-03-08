@@ -80,6 +80,7 @@
         <th>IPA</th>
         <th>SpellCast</th>
         <th>Example</th>
+        <th>Translated</th>
       </tr>
     </thead>
     <tbody id="phoneme-tbody"></tbody>
@@ -143,11 +144,16 @@ PHONEMES.forEach(p => {
 const tbody = document.getElementById('phoneme-tbody');
 PHONEMES.forEach(p => {
   const tr = document.createElement('tr');
+  // Extract plain text from example HTML for translation
+  const tmp = document.createElement('div');
+  tmp.innerHTML = p.example;
+  const exampleText = tmp.textContent;
   tr.innerHTML = `
     <td>${p.arp}</td>
     <td>${p.ipa}</td>
     <td><input class="form-control form-control-sm spell-input" data-arp="${p.arp}" value="${p.arp}" type="text" maxlength="20"></td>
     <td>${p.example}</td>
+    <td class="translated-cell" data-example="${exampleText.replace(/"/g, '&quot;')}"></td>
   `;
   tbody.appendChild(tr);
 });
@@ -188,9 +194,9 @@ async function loadDictionary() {
   }
 }
 
-function translate(inputText) {
+function translate(inputText, mode) {
   if (!cmuDict) return '';
-  const mode = document.getElementById('output-mode').value;
+  if (mode === undefined) mode = document.getElementById('output-mode').value;
   if (mode === 'english') return inputText;
 
   // Tokenize: split into word tokens and non-word separators
@@ -221,9 +227,16 @@ function translate(inputText) {
   }).join('');
 }
 
+function updateExampleColumn() {
+  document.querySelectorAll('.translated-cell').forEach(td => {
+    td.textContent = translate(td.dataset.example, 'spellcast');
+  });
+}
+
 function updateOutput() {
   const input = document.getElementById('english-input').value;
   document.getElementById('spell-output').textContent = translate(input);
+  updateExampleColumn();
 }
 
 document.getElementById('english-input').addEventListener('input', updateOutput);
