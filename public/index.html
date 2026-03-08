@@ -270,7 +270,6 @@ document.getElementById('output-mode').addEventListener('change', () => {
       input.value = symbol;
       phonemeMap[arp] = symbol;
     });
-    document.getElementById('output-mode').value = 'spellcast';
   }
   updateOutput();
 });
@@ -349,7 +348,7 @@ function translate(inputText, mode) {
         const base = ph.replace(/[012]$/, '');
         if (mode === 'ipa') return ipaMap[base] ?? base;
         if (mode === 'arpabet') return base;
-        return phonemeMap[base] ?? base; // spellcast
+        return phonemeMap[base] ?? base; // spellcast / sample spellings
       }).join('');
       // IPA and SpellCast can contain non-ASCII; only apply case to ARPABET/SpellCast
       if (mode === 'ipa') return result;
