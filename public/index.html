@@ -58,7 +58,12 @@
       <textarea id="english-input" class="form-control text-panel" placeholder="Type English text here..."></textarea>
     </div>
     <div class="col-md-6">
-      <label class="form-label fw-semibold">Spell Cast</label>
+      <select id="output-mode" class="form-select form-select-sm mb-2" style="width: auto;">
+        <option value="spellcast">Spell Cast</option>
+        <option value="arpabet">ARPABET</option>
+        <option value="ipa">IPA</option>
+        <option value="english">English</option>
+      </select>
       <div class="output-panel" id="spell-output"></div>
     </div>
   </div>
@@ -128,7 +133,11 @@ const PHONEMES = [
 ];
 
 const phonemeMap = {};
-PHONEMES.forEach(p => { phonemeMap[p.arp] = p.arp; });
+const ipaMap = {};
+PHONEMES.forEach(p => {
+  phonemeMap[p.arp] = p.arp;
+  ipaMap[p.arp] = p.ipa;
+});
 
 // Build phoneme table
 const tbody = document.getElementById('phoneme-tbody');
@@ -181,6 +190,9 @@ async function loadDictionary() {
 
 function translate(inputText) {
   if (!cmuDict) return '';
+  const mode = document.getElementById('output-mode').value;
+  if (mode === 'english') return inputText;
+
   // Tokenize: split into word tokens and non-word separators
   const tokens = inputText.split(/([^a-zA-Z']+)/);
   return tokens.map(token => {
@@ -194,9 +206,12 @@ function translate(inputText) {
       const phonemes = cmuDict[normalized];
       const result = phonemes.map(ph => {
         const base = ph.replace(/[012]$/, '');
-        return phonemeMap[base] !== undefined ? phonemeMap[base] : base;
+        if (mode === 'ipa') return ipaMap[base] ?? base;
+        if (mode === 'arpabet') return base;
+        return phonemeMap[base] ?? base; // spellcast
       }).join('');
-      // Preserve case of original token
+      // IPA and SpellCast can contain non-ASCII; only apply case to ARPABET/SpellCast
+      if (mode === 'ipa') return result;
       if (token === token.toUpperCase()) return result.toUpperCase();
       if (token[0] === token[0].toUpperCase()) return result[0].toUpperCase() + result.slice(1).toLowerCase();
       return result.toLowerCase();
@@ -212,6 +227,7 @@ function updateOutput() {
 }
 
 document.getElementById('english-input').addEventListener('input', updateOutput);
+document.getElementById('output-mode').addEventListener('change', updateOutput);
 
 loadDictionary();
 </script>
