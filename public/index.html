@@ -105,6 +105,9 @@
           <button id="save-spelling-btn" class="btn btn-sm btn-outline-secondary" title="Save current spelling">
             <i class="bi bi-floppy"></i>
           </button>
+          <button id="reset-spelling-btn" class="btn btn-sm btn-outline-secondary" title="Reset to saved spelling">
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </button>
           <select id="output-mode" class="form-select form-select-sm" style="width: auto;">
             <optgroup label="My Spellings" id="my-spellings-group"></optgroup>
             <optgroup label="Sample Spellings" id="sample-spellings-group"></optgroup>
@@ -321,8 +324,12 @@ function updateSaveButton() {
     !PHONEMES.every(p => phonemeMap[p.arp] === (selectedMap[p.arp] ?? p.arp));
   const isMySaving = outputMode.value.startsWith('my:');
   const saveBtn = document.getElementById('save-spelling-btn');
-  saveBtn.style.visibility = (modified || isMySaving) ? 'visible' : 'hidden';
+  const resetBtn = document.getElementById('reset-spelling-btn');
+  const showButtons = modified || isMySaving;
+  saveBtn.style.visibility = showButtons ? 'visible' : 'hidden';
+  resetBtn.style.visibility = showButtons ? 'visible' : 'hidden';
   saveBtn.disabled = !modified;
+  resetBtn.disabled = !modified;
   document.getElementById('delete-spelling-btn').style.visibility = isMySaving ? 'visible' : 'hidden';
   const selectedOpt = outputMode.options[outputMode.selectedIndex];
   if (selectedOpt) {
@@ -380,6 +387,19 @@ document.getElementById('save-spelling-btn').addEventListener('click', () => {
   }
   populateMySpellings();
   outputMode.value = val.startsWith('my:') ? val : `my:${spellings.length - 1}`;
+  updateSaveButton();
+});
+
+// Reset spelling button
+document.getElementById('reset-spelling-btn').addEventListener('click', () => {
+  const spelling = getSelectedMap();
+  if (!spelling) return;
+  document.querySelectorAll('.spell-input').forEach(input => {
+    const symbol = spelling[input.dataset.arp] ?? input.dataset.arp;
+    input.value = symbol;
+    phonemeMap[input.dataset.arp] = symbol;
+  });
+  updateOutput();
   updateSaveButton();
 });
 
