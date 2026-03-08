@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spell Caster</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #f5f0e8; color: #2c2c2c; padding: 24px; }
+  h1 { text-align: center; font-size: 2.2rem; margin-bottom: 20px; letter-spacing: 2px; color: #4a2c6e; }
+
+  .top-section { display: flex; gap: 16px; margin-bottom: 12px; }
+  .panel { flex: 1; display: flex; flex-direction: column; }
+  .panel label { font-weight: bold; margin-bottom: 6px; font-size: 1rem; }
+  textarea, .output-box {
+    width: 100%; height: 200px; padding: 10px;
+    font-family: Georgia, serif; font-size: 1rem;
+    border: 2px solid #c0a080; border-radius: 6px;
+    background: #fffdf8; resize: vertical; overflow-y: auto;
+  }
+  .output-box { white-space: pre-wrap; word-break: break-word; }
+
+  #status { text-align: center; font-style: italic; color: #7a5c3a; margin-bottom: 16px; font-size: 0.9rem; }
+
+  h2 { text-align: center; font-size: 1.3rem; margin-bottom: 10px; color: #4a2c6e; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th { background: #4a2c6e; color: #fff; padding: 8px 10px; text-align: left; }
+  tr:nth-child(even) { background: #f0e8d8; }
+  tr:nth-child(odd) { background: #fffdf8; }
+  td { padding: 6px 10px; vertical-align: middle; }
+  td:first-child { font-family: monospace; font-weight: bold; font-size: 1rem; }
+  td:nth-child(2) { font-size: 1.1rem; }
+
+  .spell-input {
+    width: 60px; padding: 3px 6px;
+    font-family: Georgia, serif; font-size: 0.95rem;
+    border: 1px solid #c0a080; border-radius: 4px;
+    background: #fffdf8;
+  }
+</style>
+</head>
+<body>
+
+<h1>Spell Caster</h1>
+
+<div class="top-section">
+  <div class="panel">
+    <label for="english-input">English</label>
+    <textarea id="english-input" placeholder="Type English text here..."></textarea>
+  </div>
+  <div class="panel">
+    <label>Spell Cast</label>
+    <div class="output-box" id="spell-output"></div>
+  </div>
+</div>
+
+<div id="status">Loading dictionary...</div>
+
+<h2>ARPABET Phoneme Table</h2>
+<table id="phoneme-table">
+  <thead>
+    <tr><th>ARPABET</th><th>IPA</th><th>SpellCast</th><th>Example</th></tr>
+  </thead>
+  <tbody id="phoneme-tbody"></tbody>
+</table>
+
+<script>
+const PHONEMES = [
+  // Vowels
+  { arp: 'AA', ipa: 'ɑ', example: '<strong>odd</strong>, f<strong>a</strong>ther' },
+  { arp: 'AE', ipa: 'æ', example: '<strong>at</strong>, b<strong>a</strong>t' },
+  { arp: 'AH', ipa: 'ʌ', example: 'h<strong>u</strong>t, b<strong>u</strong>t' },
+  { arp: 'AO', ipa: 'ɔ', example: '<strong>ought</strong>, t<strong>aw</strong>' },
+  { arp: 'AW', ipa: 'aʊ', example: 'c<strong>ow</strong>, <strong>ou</strong>t' },
+  { arp: 'AY', ipa: 'aɪ', example: 'h<strong>ide</strong>, k<strong>ite</strong>' },
+  { arp: 'EH', ipa: 'ɛ', example: '<strong>Ed</strong>, b<strong>e</strong>d' },
+  { arp: 'ER', ipa: 'ɝ', example: '<strong>bird</strong>, h<strong>er</strong>d' },
+  { arp: 'EY', ipa: 'eɪ', example: '<strong>say</strong>, m<strong>ate</strong>' },
+  { arp: 'IH', ipa: 'ɪ', example: '<strong>it</strong>, b<strong>i</strong>t' },
+  { arp: 'IY', ipa: 'iː', example: '<strong>see</strong>, b<strong>ea</strong>t' },
+  { arp: 'OW', ipa: 'oʊ', example: '<strong>go</strong>, b<strong>oa</strong>t' },
+  { arp: 'OY', ipa: 'ɔɪ', example: '<strong>boy</strong>, t<strong>oy</strong>' },
+  { arp: 'UH', ipa: 'ʊ', example: '<strong>book</strong>, p<strong>u</strong>t' },
+  { arp: 'UW', ipa: 'uː', example: '<strong>two</strong>, f<strong>oo</strong>d' },
+  // Consonants
+  { arp: 'B',  ipa: 'b',  example: '<strong>be</strong>, a<strong>b</strong>out' },
+  { arp: 'CH', ipa: 'tʃ', example: '<strong>cheese</strong>, wa<strong>tch</strong>' },
+  { arp: 'D',  ipa: 'd',  example: '<strong>dog</strong>, a<strong>d</strong>o' },
+  { arp: 'DH', ipa: 'ð',  example: '<strong>the</strong>, brea<strong>the</strong>' },
+  { arp: 'F',  ipa: 'f',  example: '<strong>fee</strong>, lea<strong>f</strong>' },
+  { arp: 'G',  ipa: 'ɡ',  example: '<strong>green</strong>, bi<strong>g</strong>' },
+  { arp: 'HH', ipa: 'h',  example: '<strong>he</strong>, a<strong>h</strong>ead' },
+  { arp: 'JH', ipa: 'dʒ', example: '<strong>just</strong>, e<strong>dge</strong>' },
+  { arp: 'K',  ipa: 'k',  example: '<strong>key</strong>, ba<strong>ck</strong>' },
+  { arp: 'L',  ipa: 'l',  example: '<strong>lee</strong>, be<strong>ll</strong>' },
+  { arp: 'M',  ipa: 'm',  example: '<strong>me</strong>, ha<strong>m</strong>' },
+  { arp: 'N',  ipa: 'n',  example: '<strong>knee</strong>, ca<strong>n</strong>' },
+  { arp: 'NG', ipa: 'ŋ',  example: 'si<strong>ng</strong>, ri<strong>ng</strong>' },
+  { arp: 'P',  ipa: 'p',  example: '<strong>pee</strong>, ha<strong>pp</strong>y' },
+  { arp: 'R',  ipa: 'r',  example: '<strong>read</strong>, ca<strong>r</strong>' },
+  { arp: 'S',  ipa: 's',  example: '<strong>sea</strong>, pa<strong>ss</strong>' },
+  { arp: 'SH', ipa: 'ʃ',  example: '<strong>she</strong>, cra<strong>sh</strong>' },
+  { arp: 'T',  ipa: 't',  example: '<strong>tea</strong>, bu<strong>tt</strong>on' },
+  { arp: 'TH', ipa: 'θ',  example: '<strong>thin</strong>, ma<strong>th</strong>' },
+  { arp: 'V',  ipa: 'v',  example: '<strong>vee</strong>, ha<strong>ve</strong>' },
+  { arp: 'W',  ipa: 'w',  example: '<strong>we</strong>, a<strong>w</strong>ay' },
+  { arp: 'Y',  ipa: 'j',  example: '<strong>yes</strong>, <strong>y</strong>ard' },
+  { arp: 'Z',  ipa: 'z',  example: '<strong>zoo</strong>, ha<strong>z</strong>e' },
+  { arp: 'ZH', ipa: 'ʒ',  example: '<strong>vision</strong>, bei<strong>ge</strong>' },
+];
+
+const phonemeMap = {};
+PHONEMES.forEach(p => { phonemeMap[p.arp] = p.arp; });
+
+// Build phoneme table
+const tbody = document.getElementById('phoneme-tbody');
+PHONEMES.forEach(p => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${p.arp}</td>
+    <td>${p.ipa}</td>
+    <td><input class="spell-input" data-arp="${p.arp}" value="${p.arp}" type="text" maxlength="20"></td>
+    <td>${p.example}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// SpellCast input listeners
+document.querySelectorAll('.spell-input').forEach(input => {
+  input.addEventListener('input', () => {
+    phonemeMap[input.dataset.arp] = input.value;
+    updateOutput();
+  });
+});
+
+let cmuDict = null;
+
+async function loadDictionary() {
+  const status = document.getElementById('status');
+  try {
+    const response = await fetch('cmudict-0.7b.txt');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const text = await response.text();
+    cmuDict = {};
+    const lines = text.split('\n');
+    for (const line of lines) {
+      if (line.startsWith(';;;')) continue;
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      const sepIdx = trimmed.indexOf('  ');
+      if (sepIdx === -1) continue;
+      const word = trimmed.slice(0, sepIdx);
+      if (/\(\d+\)$/.test(word)) continue;
+      const phonemes = trimmed.slice(sepIdx + 2).trim().split(' ');
+      cmuDict[word.toUpperCase()] = phonemes;
+    }
+    status.textContent = 'Dictionary loaded.';
+    updateOutput();
+  } catch (e) {
+    status.textContent = `Failed to load dictionary: ${e.message}`;
+  }
+}
+
+function translate(inputText) {
+  if (!cmuDict) return '';
+  // Tokenize: split into word tokens and non-word separators
+  const tokens = inputText.split(/([^a-zA-Z']+)/);
+  return tokens.map(token => {
+    if (!token) return token;
+    // Non-word token (punctuation/whitespace)
+    if (/^[^a-zA-Z']/.test(token)) return token;
+    // Word token
+    const normalized = token.toUpperCase().replace(/[^A-Z]/g, '');
+    if (!normalized) return token;
+    if (cmuDict[normalized]) {
+      const phonemes = cmuDict[normalized];
+      return phonemes.map(ph => {
+        const base = ph.replace(/[012]$/, '');
+        return phonemeMap[base] !== undefined ? phonemeMap[base] : base;
+      }).join('');
+    } else {
+      return '[' + token + ']';
+    }
+  }).join('');
+}
+
+function updateOutput() {
+  const input = document.getElementById('english-input').value;
+  document.getElementById('spell-output').textContent = translate(input);
+}
+
+document.getElementById('english-input').addEventListener('input', updateOutput);
+
+loadDictionary();
+</script>
+</body>
+</html>
