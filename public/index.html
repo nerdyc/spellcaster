@@ -97,7 +97,7 @@
     </div>
     <div class="col-md-6">
       <div class="d-flex align-items-center justify-content-between mb-2">
-        <label class="form-label fw-semibold mb-0">Translated Text</label>
+        <label class="form-label fw-semibold mb-0">Phonetic Spelling</label>
         <div class="d-flex align-items-center gap-1">
           <button id="delete-spelling-btn" class="btn btn-sm btn-outline-danger" title="Delete this spelling">
             <i class="bi bi-trash"></i>
@@ -112,6 +112,9 @@
             <optgroup label="My Spellings" id="my-spellings-group"></optgroup>
             <optgroup label="Sample Spellings" id="sample-spellings-group"></optgroup>
           </select>
+          <button id="share-btn" class="btn btn-sm btn-primary ms-1" title="Share this spelling">
+            <i class="bi bi-share-fill"></i> Share
+          </button>
         </div>
       </div>
       <div class="output-panel" id="spell-output"></div>
@@ -226,7 +229,7 @@ const PHONEMES = [
   { arp: 'AA', ipa: 'ɑ', example: '<strong>o</strong>dd, f<strong>a</strong>ther' },
   { arp: 'AE', ipa: 'æ', example: '<strong>a</strong>t, b<strong>a</strong>t' },
   { arp: 'AH', ipa: 'ʌ', example: 'h<strong>u</strong>t, b<strong>u</strong>t' },
-  { arp: 'AO', ipa: 'ɔ', example: '<strong>ou</strong>ght, t<strong>aw</strong>' },
+  { arp: 'AO', ipa: 'ɔ', example: '<strong>ou</strong>ght, j<strong>aw</strong>' },
   { arp: 'AW', ipa: 'aʊ', example: 'c<strong>ow</strong>, <strong>ou</strong>t' },
   { arp: 'AY', ipa: 'aɪ', example: 'h<strong>i</strong>de, k<strong>i</strong>te' },
   { arp: 'EH', ipa: 'ɛ', example: '<strong>E</strong>d, b<strong>e</strong>d' },
@@ -451,6 +454,28 @@ document.getElementById('reset-spelling-btn').addEventListener('click', () => {
   });
   updateOutput();
   updateSaveButton();
+});
+
+// Share button
+document.getElementById('share-btn').addEventListener('click', async () => {
+  const url = location.href;
+  const shareData = { title: 'Spell Caster', url };
+
+  // Copy to clipboard
+  try { await navigator.clipboard.writeText(url); } catch {}
+
+  // Present native share sheet if available, otherwise show brief feedback
+  if (navigator.share) {
+    try { await navigator.share(shareData); } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  } else {
+    const btn = document.getElementById('share-btn');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
+  }
 });
 
 // Delete spelling button
