@@ -111,10 +111,6 @@
           <select id="output-mode" class="form-select form-select-sm" style="width: auto;">
             <optgroup label="My Spellings" id="my-spellings-group"></optgroup>
             <optgroup label="Sample Spellings" id="sample-spellings-group"></optgroup>
-            <optgroup label="Standard Spellings">
-              <option value="arpabet">ARPABET</option>
-              <option value="ipa">IPA</option>
-            </optgroup>
           </select>
         </div>
       </div>
@@ -196,6 +192,30 @@ const SAMPLE_SPELLINGS = [
       HH: 'X', JH: 'X', K: 'X', L: 'X', M: 'X', N: 'X',
       NG: 'X', P: 'X', R: 'X', S: 'X', SH: 'X', T: 'X',
       TH: 'X', V: 'X', W: 'X', Y: 'X', Z: 'X', ZH: 'X',
+    },
+  },
+  {
+    name: 'ARPABET',
+    map: {
+      AA: 'AA', AE: 'AE', AH: 'AH', AO: 'AO', AW: 'AW', AY: 'AY',
+      EH: 'EH', ER: 'ER', EY: 'EY', IH: 'IH', IY: 'IY', OW: 'OW',
+      OY: 'OY', UH: 'UH', UW: 'UW',
+      B: 'B', CH: 'CH', D: 'D', DH: 'DH', F: 'F', G: 'G',
+      HH: 'HH', JH: 'JH', K: 'K', L: 'L', M: 'M', N: 'N',
+      NG: 'NG', P: 'P', R: 'R', S: 'S', SH: 'SH', T: 'T',
+      TH: 'TH', V: 'V', W: 'W', Y: 'Y', Z: 'Z', ZH: 'ZH',
+    },
+  },
+  {
+    name: 'IPA',
+    map: {
+      AA: 'ɑ', AE: 'æ', AH: 'ʌ', AO: 'ɔ', AW: 'aʊ', AY: 'aɪ',
+      EH: 'ɛ', ER: 'ɝ', EY: 'eɪ', IH: 'ɪ', IY: 'iː', OW: 'oʊ',
+      OY: 'ɔɪ', UH: 'ʊ', UW: 'uː',
+      B: 'b', CH: 'tʃ', D: 'd', DH: 'ð', F: 'f', G: 'ɡ',
+      HH: 'h', JH: 'dʒ', K: 'k', L: 'l', M: 'm', N: 'n',
+      NG: 'ŋ', P: 'p', R: 'r', S: 's', SH: 'ʃ', T: 't',
+      TH: 'θ', V: 'v', W: 'w', Y: 'j', Z: 'z', ZH: 'ʒ',
     },
   },
 ];
