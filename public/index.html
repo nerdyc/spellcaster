@@ -90,12 +90,15 @@
       <textarea id="english-input" class="form-control text-panel" placeholder="Type English text here..."></textarea>
     </div>
     <div class="col-md-6">
-      <select id="output-mode" class="form-select form-select-sm mb-2" style="width: auto;">
-        <option value="spellcast">Custom Phonetic Spelling</option>
-        <option value="arpabet">ARPABET</option>
-        <option value="ipa">IPA</option>
-        <option value="english">English</option>
-      </select>
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <label class="form-label fw-semibold mb-0">Translated Text</label>
+        <select id="output-mode" class="form-select form-select-sm" style="width: auto;">
+          <option value="spellcast">Custom Phonetic Spelling</option>
+          <option value="arpabet">ARPABET</option>
+          <option value="ipa">IPA</option>
+          <option value="english">English</option>
+        </select>
+      </div>
       <div class="output-panel" id="spell-output"></div>
     </div>
   </div>
