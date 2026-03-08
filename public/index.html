@@ -273,6 +273,8 @@ SAMPLE_SPELLINGS.forEach((s, i) => {
   sampleSpellingsGroup.appendChild(opt);
 });
 
+const outputMode = document.getElementById('output-mode');
+
 // Output mode + sample spelling select handler
 document.getElementById('output-mode').addEventListener('change', () => {
   const val = document.getElementById('output-mode').value;
@@ -315,6 +317,15 @@ document.querySelectorAll('.spell-input').forEach(input => {
     updateOutput();
   });
 });
+
+// Apply default sample spelling (must run after table inputs exist)
+const defaultSpelling = SAMPLE_SPELLINGS[0];
+document.querySelectorAll('.spell-input').forEach(input => {
+  const symbol = defaultSpelling.map[input.dataset.arp] ?? input.dataset.arp;
+  input.value = symbol;
+  phonemeMap[input.dataset.arp] = symbol;
+});
+outputMode.value = 'sample:0';
 
 let cmuDict = null;
 
