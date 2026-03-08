@@ -69,7 +69,7 @@
 <div class="container py-4">
 
   <div class="d-flex align-items-center justify-content-center mb-4 gap-3">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80" aria-label="Spell Caster logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40" aria-label="Spell Caster logo">
       <!-- Outer circle -->
       <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2.5"/>
 
@@ -100,7 +100,8 @@
     </svg>
     <h1 class="fw-bold mb-0">Spell Caster</h1>
   </div>
-
+  <p>English spelling is tricky, and you've probably wondered why we can't just spell things like they sound. SpellCaster let's you explore what alternative spelling systems might look like!</p>
+  <hr />
   <div class="row g-3 mb-2">
     <div class="col-md-6">
       <div class="d-flex align-items-center justify-content-between mb-2">
@@ -113,7 +114,7 @@
     </div>
     <div class="col-md-6">
       <div class="d-flex align-items-center justify-content-between mb-2">
-        <label class="form-label fw-semibold mb-0">Phonetic Spelling</label>
+        <label class="form-label fw-semibold mb-0">Alternative Spelling</label>
         <div class="d-flex align-items-center gap-1">
           <button id="delete-spelling-btn" class="btn btn-sm btn-outline-danger" title="Delete this spelling">
             <i class="bi bi-trash"></i>
@@ -140,8 +141,8 @@
   <div class="text-center mb-4">
     <span id="status" class="text-secondary fst-italic">Loading dictionary...</span>
   </div>
-
-  <h2 class="text-center mb-3 fs-5 fw-semibold">Create your own phonetic spelling!</h2>
+  <hr />
+  <h2 class="mb-3 fs-5 fw-semibold">Create your own alternative spelling!</h2>
   <p class="text-center">Each row below represents one sound (phoneme) in the English language. Enter your own spelling for each phoneme to explore alternative spellings of English.</p>
   <table id="phoneme-table" class="table table-striped table-bordered table-sm align-middle">
     <thead>
@@ -155,7 +156,17 @@
     </thead>
     <tbody id="phoneme-tbody"></tbody>
   </table>
-
+  <hr />
+  <section class="mt-4 mb-3">
+    <h2 class="mb-3 fs-5 fw-semibold">About SpellCaster</h2>
+    <p>
+      <strong>SpellCaster</strong> was created by <a href="http://nerdyc.com/" target="_blank" rel="noopener">Christian Niles</a>, a lifetime language nerd. If you like this site, you'll love <a href="https://dannybate.com/book/">Why Q Needs U by Danny Bate</a> (as well as <a href="https://lingthusiasm.com">Lingthusiam</a>). The book tells the history of the English alphabet and might actually make you appreciate English's weird wonky spelling.
+    </p>
+    <p>Pronunciations are sourced from the <a href="http://www.speech.cs.cmu.edu/cgi-bin/cmudict" target="_blank" rel="noopener">CMU Pronouncing Dictionary</a>,
+      a free resource from Carnegie Mellon University covering over 134,000 English words. </p>
+    <p>
+        This site was built with the help of <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a>, which makes creating silly things like this easy to do in a day or less. The source code is <a href="https://github.com/nerdyc/spellcaster">available on GitHub</a>.
+  </section>
 </div>
 
 <script>
