@@ -394,6 +394,7 @@ document.getElementById('save-spelling-btn').addEventListener('click', () => {
 document.getElementById('reset-spelling-btn').addEventListener('click', () => {
   const spelling = getSelectedMap();
   if (!spelling) return;
+  if (!confirm('Discard all edits and reset to the saved spelling?')) return;
   document.querySelectorAll('.spell-input').forEach(input => {
     const symbol = spelling[input.dataset.arp] ?? input.dataset.arp;
     input.value = symbol;
