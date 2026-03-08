@@ -352,17 +352,27 @@ document.getElementById('output-mode').addEventListener('change', () => {
 
 // Save spelling button
 document.getElementById('save-spelling-btn').addEventListener('click', () => {
-  const name = prompt('Name this spelling:');
-  if (!name || !name.trim()) return;
   const map = {};
   document.querySelectorAll('.spell-input').forEach(input => {
     map[input.dataset.arp] = input.value;
   });
   const spellings = loadMySpellings();
-  spellings.push({ name: name.trim(), map });
-  saveMySpellings(spellings);
+  const val = outputMode.value;
+  if (val.startsWith('my:')) {
+    // Update existing stored spelling in place
+    const idx = parseInt(val.split(':')[1]);
+    spellings[idx].map = map;
+    saveMySpellings(spellings);
+  } else {
+    // Prompt for a name and save as new
+    const name = prompt('Name this spelling:');
+    if (!name || !name.trim()) return;
+    spellings.push({ name: name.trim(), map });
+    saveMySpellings(spellings);
+    outputMode.value = `my:${spellings.length - 1}`;
+  }
   populateMySpellings();
-  document.getElementById('output-mode').value = `my:${spellings.length - 1}`;
+  outputMode.value = val.startsWith('my:') ? val : `my:${spellings.length - 1}`;
   updateSaveButton();
 });
 
