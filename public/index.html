@@ -38,7 +38,7 @@
 
   #phoneme-table th { background-color: #3d405b; color: #fff; }
   #phoneme-table td:first-child { font-family: monospace; font-weight: 600; }
-  #phoneme-table td:nth-child(2) { font-size: 1.1rem; }
+  #phoneme-table td:nth-child(2) { font-size: 1.15rem; }
 
   .spell-input {
     width: 70px;
@@ -51,7 +51,38 @@
 
 <div class="container py-4">
 
-  <h1 class="text-center mb-4 fw-bold">Spell Caster</h1>
+  <div class="d-flex align-items-center justify-content-center mb-4 gap-3">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80" aria-label="Spell Caster logo">
+      <!-- Outer circle -->
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#3d405b" stroke-width="2.5"/>
+
+      <!-- Left page -->
+      <path d="M 48,73 L 15,73 L 15,45 Q 31.5,41 48,44 Z"
+            fill="#ffffff" stroke="#3d405b" stroke-width="1.8" stroke-linejoin="round"/>
+      <!-- Right page -->
+      <path d="M 52,73 L 85,73 L 85,45 Q 68.5,41 52,44 Z"
+            fill="#ffffff" stroke="#3d405b" stroke-width="1.8" stroke-linejoin="round"/>
+      <!-- Spine bottom curve -->
+      <path d="M 48,73 Q 50,77 52,73" fill="none" stroke="#3d405b" stroke-width="1.8"/>
+      <!-- Spine top curve -->
+      <path d="M 48,44 Q 50,42 52,44" fill="none" stroke="#3d405b" stroke-width="1.5"/>
+
+      <!-- Text lines on left page -->
+      <line x1="21" y1="52" x2="43" y2="52" stroke="#3d405b" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+      <line x1="21" y1="58" x2="43" y2="58" stroke="#3d405b" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+      <line x1="21" y1="64" x2="35" y2="64" stroke="#3d405b" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+      <!-- Text lines on right page -->
+      <line x1="57" y1="52" x2="79" y2="52" stroke="#3d405b" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+      <line x1="57" y1="58" x2="79" y2="58" stroke="#3d405b" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+      <line x1="57" y1="64" x2="72" y2="64" stroke="#3d405b" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+
+      <!-- IPA symbols rising from the book -->
+      <text x="29" y="36" font-family="'EB Garamond', Georgia, serif" font-size="12" fill="#3d405b" text-anchor="middle">ə</text>
+      <text x="50" y="25" font-family="'EB Garamond', Georgia, serif" font-size="14" fill="#3d405b" text-anchor="middle">æ</text>
+      <text x="71" y="34" font-family="'EB Garamond', Georgia, serif" font-size="12" fill="#3d405b" text-anchor="middle">ɪ</text>
+    </svg>
+    <h1 class="fw-bold mb-0">Spell Caster</h1>
+  </div>
 
   <div class="row g-3 mb-2">
     <div class="col-md-6">
@@ -79,8 +110,8 @@
       <tr>
         <th>ARPABET</th>
         <th>IPA</th>
-        <th>SpellCast</th>
         <th>Example</th>
+        <th>SpellCast</th>
         <th>Translated</th>
       </tr>
     </thead>
@@ -152,8 +183,8 @@ PHONEMES.forEach(p => {
   tr.innerHTML = `
     <td>${p.arp}</td>
     <td>${p.ipa}</td>
-    <td><input class="form-control form-control-sm spell-input" data-arp="${p.arp}" value="${p.arp}" type="text" maxlength="20"></td>
     <td>${p.example}</td>
+    <td><input class="form-control form-control-sm spell-input" data-arp="${p.arp}" value="${p.arp}" type="text" maxlength="20"></td>
     <td class="translated-cell" data-example="${exampleText.replace(/"/g, '&quot;')}"></td>
   `;
   tbody.appendChild(tr);
