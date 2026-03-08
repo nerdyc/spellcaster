@@ -91,7 +91,7 @@
     </div>
     <div class="col-md-6">
       <select id="output-mode" class="form-select form-select-sm mb-2" style="width: auto;">
-        <option value="spellcast">Spell Cast</option>
+        <option value="spellcast">Custom Phonetic Spelling</option>
         <option value="arpabet">ARPABET</option>
         <option value="ipa">IPA</option>
         <option value="english">English</option>
@@ -104,15 +104,16 @@
     <span id="status" class="text-secondary fst-italic">Loading dictionary...</span>
   </div>
 
-  <h2 class="text-center mb-3 fs-5 fw-semibold">ARPABET Phoneme Table</h2>
+  <h2 class="text-center mb-3 fs-5 fw-semibold">Create your own phonetic spelling!</h2>
+  <p class="text-center">Each row below represents one sound (phoneme) in the English language. Enter your own spelling for each phoneme to explore alternative spellings of English.</p>
   <table id="phoneme-table" class="table table-striped table-bordered table-sm align-middle">
     <thead>
       <tr>
         <th>ARPABET</th>
         <th>IPA</th>
         <th>Example</th>
-        <th>SpellCast</th>
-        <th>Translated</th>
+        <th>Custom Spelling</th>
+        <th>Translated Example</th>
       </tr>
     </thead>
     <tbody id="phoneme-tbody"></tbody>
