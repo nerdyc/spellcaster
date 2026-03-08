@@ -320,7 +320,9 @@ function updateSaveButton() {
   const modified = selectedMap === null ||
     !PHONEMES.every(p => phonemeMap[p.arp] === (selectedMap[p.arp] ?? p.arp));
   const isMySaving = outputMode.value.startsWith('my:');
-  document.getElementById('save-spelling-btn').style.visibility = modified ? 'visible' : 'hidden';
+  const saveBtn = document.getElementById('save-spelling-btn');
+  saveBtn.style.visibility = (modified || isMySaving) ? 'visible' : 'hidden';
+  saveBtn.disabled = !modified;
   document.getElementById('delete-spelling-btn').style.visibility = isMySaving ? 'visible' : 'hidden';
   const selectedOpt = outputMode.options[outputMode.selectedIndex];
   if (selectedOpt) {
