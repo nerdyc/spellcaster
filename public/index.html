@@ -251,6 +251,11 @@ SAMPLES.forEach((s, i) => {
   group.appendChild(opt);
   sampleSelect.appendChild(group);
 });
+// Load default sample text
+const DEFAULT_SAMPLE = 0;
+document.getElementById('english-input').value = SAMPLES[DEFAULT_SAMPLE].text;
+sampleSelect.value = String(DEFAULT_SAMPLE);
+
 sampleSelect.addEventListener('change', () => {
   const idx = sampleSelect.value;
   if (idx === '') return;
