@@ -320,7 +320,7 @@ function getSelectedMap() {
 
 function updateSaveButton() {
   const selectedMap = getSelectedMap();
-  const modified = selectedMap === null ||
+  const modified = selectedMap !== null &&
     !PHONEMES.every(p => phonemeMap[p.arp] === (selectedMap[p.arp] ?? p.arp));
   const isMySaving = outputMode.value.startsWith('my:');
   const saveBtn = document.getElementById('save-spelling-btn');
