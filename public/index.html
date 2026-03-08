@@ -305,10 +305,33 @@ function populateMySpellings() {
   group.innerHTML = '';
   loadMySpellings().forEach((s, i) => addMySpellingOption(s.name, i));
 }
+function getSelectedMap() {
+  const val = outputMode.value;
+  if (val.startsWith('sample:')) return SAMPLE_SPELLINGS[parseInt(val.split(':')[1])]?.map ?? null;
+  if (val.startsWith('my:')) return loadMySpellings()[parseInt(val.split(':')[1])]?.map ?? null;
+  return null; // arpabet / ipa — no custom map
+}
+
+function updateSaveButton() {
+  const selectedMap = getSelectedMap();
+  const modified = selectedMap === null ||
+    !PHONEMES.every(p => phonemeMap[p.arp] === (selectedMap[p.arp] ?? p.arp));
+  document.getElementById('save-spelling-btn').style.visibility = modified ? 'visible' : 'hidden';
+  const selectedOpt = outputMode.options[outputMode.selectedIndex];
+  if (selectedOpt) {
+    const baseName = selectedOpt.dataset.baseName ?? selectedOpt.textContent.replace(/\*$/, '').trimEnd();
+    selectedOpt.dataset.baseName = baseName;
+    selectedOpt.textContent = modified ? baseName + ' *' : baseName;
+  }
+}
 // ──────────────────────────────────────────────────────────────────────────────
 
 // Output mode + sample spelling select handler
 document.getElementById('output-mode').addEventListener('change', () => {
+  // Clear asterisk from previously selected option
+  Array.from(outputMode.options).forEach(opt => {
+    if (opt.dataset.baseName) opt.textContent = opt.dataset.baseName;
+  });
   const val = document.getElementById('output-mode').value;
   let spelling = null;
   if (val.startsWith('sample:')) {
@@ -324,6 +347,7 @@ document.getElementById('output-mode').addEventListener('change', () => {
     });
   }
   updateOutput();
+  updateSaveButton();
 });
 
 // Save spelling button
@@ -339,6 +363,7 @@ document.getElementById('save-spelling-btn').addEventListener('click', () => {
   saveMySpellings(spellings);
   populateMySpellings();
   document.getElementById('output-mode').value = `my:${spellings.length - 1}`;
+  updateSaveButton();
 });
 
 // Build phoneme table
@@ -364,6 +389,7 @@ document.querySelectorAll('.spell-input').forEach(input => {
   input.addEventListener('input', () => {
     phonemeMap[input.dataset.arp] = input.value;
     updateOutput();
+    updateSaveButton();
   });
 });
 
@@ -376,6 +402,7 @@ document.querySelectorAll('.spell-input').forEach(input => {
   phonemeMap[input.dataset.arp] = symbol;
 });
 outputMode.value = 'sample:0';
+updateSaveButton();
 
 let cmuDict = null;
 
