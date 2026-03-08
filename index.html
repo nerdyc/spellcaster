@@ -175,10 +175,14 @@ function translate(inputText) {
     if (!normalized) return token;
     if (cmuDict[normalized]) {
       const phonemes = cmuDict[normalized];
-      return phonemes.map(ph => {
+      const result = phonemes.map(ph => {
         const base = ph.replace(/[012]$/, '');
         return phonemeMap[base] !== undefined ? phonemeMap[base] : base;
       }).join('');
+      // Preserve case of original token
+      if (token === token.toUpperCase()) return result.toUpperCase();
+      if (token[0] === token[0].toUpperCase()) return result[0].toUpperCase() + result.slice(1).toLowerCase();
+      return result.toLowerCase();
     } else {
       return '[' + token + ']';
     }
