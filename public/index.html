@@ -86,7 +86,12 @@
 
   <div class="row g-3 mb-2">
     <div class="col-md-6">
-      <label for="english-input" class="form-label fw-semibold">English</label>
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <label for="english-input" class="form-label fw-semibold mb-0">English</label>
+        <select id="sample-select" class="form-select form-select-sm" style="width: auto;">
+          <option value="">— sample texts —</option>
+        </select>
+      </div>
       <textarea id="english-input" class="form-control text-panel" placeholder="Type English text here..."></textarea>
     </div>
     <div class="col-md-6">
@@ -125,6 +130,33 @@
 </div>
 
 <script>
+// ─── Sample Texts ──────────────────────────────────────────────────────────────
+// To add a new sample: copy one object below, fill in title/author/text, done.
+const SAMPLES = [
+  {
+    title: '"It was the best of times..."',
+    author: 'Charles Dickens — A Tale of Two Cities',
+    text: `It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way–in short, the period was so far like the present period that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.`,
+  },
+  {
+    title: '"When in the Course of human events..."',
+    author: 'Thomas Jefferson — Declaration of Independence',
+    text: `When in the Course of human events, it becomes necessary for one people to dissolve the political bands which have connected them with another, and to assume among the powers of the earth, the separate and equal station to which the Laws of Nature and of Nature's God entitle them, a decent respect to the opinions of mankind requires that they should declare the causes which impel them to the separation.`,
+  },
+  {
+    title: '"I have a dream..."',
+    author: 'Martin Luther King Jr. — I Have a Dream',
+    text: `I have a dream that one day this nation will rise up and live out the true meaning of its creed: "We hold these truths to be self-evident, that all men are created equal."
+
+I have a dream that one day on the red hills of Georgia, the sons of former slaves and the sons of former slave owners will be able to sit down together at the table of brotherhood.
+
+I have a dream that one day even the state of Mississippi, a state sweltering with the heat of injustice, sweltering with the heat of oppression, will be transformed into an oasis of freedom and justice.
+
+I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character.`,
+  },
+];
+// ──────────────────────────────────────────────────────────────────────────────
+
 const PHONEMES = [
   // Vowels
   { arp: 'AA', ipa: 'ɑ', example: '<strong>o</strong>dd, f<strong>a</strong>ther' },
@@ -174,6 +206,25 @@ const ipaMap = {};
 PHONEMES.forEach(p => {
   phonemeMap[p.arp] = p.arp;
   ipaMap[p.arp] = p.ipa;
+});
+
+// Build sample text select
+const sampleSelect = document.getElementById('sample-select');
+SAMPLES.forEach((s, i) => {
+  const group = document.createElement('optgroup');
+  group.label = s.author;
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = s.title;
+  group.appendChild(opt);
+  sampleSelect.appendChild(group);
+});
+sampleSelect.addEventListener('change', () => {
+  const idx = sampleSelect.value;
+  if (idx === '') return;
+  document.getElementById('english-input').value = SAMPLES[idx].text;
+  sampleSelect.value = '';
+  updateOutput();
 });
 
 // Build phoneme table
